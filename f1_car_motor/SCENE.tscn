@@ -1,0 +1,51 @@
+[gd_scene load_steps=9 format=3 uid="uid://bhercqkdhfi5d"]
+
+[ext_resource type="PackedScene" uid="uid://c7oxpimxbqkgn" path="res://F1_Car.tscn" id="1_s0af6"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_wj54a"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_shnh6"]
+sky_material = SubResource("ProceduralSkyMaterial_wj54a")
+
+[sub_resource type="Environment" id="Environment_n5vdu"]
+background_mode = 2
+sky = SubResource("Sky_shnh6")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_jatx5"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_7nohm"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_jdqfn"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_uclxd"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_n5vdu")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.555839, 2.4679, -13.433)
+mesh = SubResource("BoxMesh_jatx5")
+
+[node name="F1" parent="." instance=ExtResource("1_s0af6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0891943, 0.250631, 0.600437)
+
+[node name="RigidBody3D" type="RigidBody3D" parent="."]
+transform = Transform3D(10000, 0, 0, 0, 1, 0, 0, 0, 10000, 0, 0, 0)
+physics_material_override = SubResource("PhysicsMaterial_7nohm")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
+shape = SubResource("BoxShape3D_jdqfn")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(100, 0, 0, 0, 0.1, 0, 0, 0, 100, 0.188695, 0.0158329, 0.0224366)
+mesh = SubResource("BoxMesh_uclxd")
