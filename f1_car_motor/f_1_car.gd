@@ -2,8 +2,9 @@ extends CharacterBody3D
 
 var SPEED = 0.0
 var ACCELERATION = 0.0 # Will be calculated dynamically
-var BREAK_VALUE = 5.0
-var DECELERATION = 2.5
+var BREAK_VALUE = 10.0
+var DECELERATION = 3.0
+var ENGINE_BRAKING = 2.0
 var MAX_SPEED = 100.0
 var CURRENT_GEAR = 0
 var ACCELERATION_FORCE = 0.0 # Will be calculated dynamically
@@ -34,10 +35,14 @@ var EFFICIENCY = 0.0
 
 var GEAR_RATIOS = [0.1, 3.5, 2.8, 2.2, 1.8, 1.4, 1.1]  # Gear transmission ratios
 var MAX_SPEED_PER_GEAR = [0.0, 40.0, 60.0, 70.0, 75.0, 90.0, 100.0]  # Max speed in m/s per gear
+var MIN_SPEED_PER_GEAR = [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0]  # Min speed allowed per gear
+var ACCELERATION_LIMITS = [0.0, 5.0, 4.5, 4.0, 3.5, 2.8, 2.0]
 var FINAL_DRIVE_RATIO = 3.9  # Differential ratio
 var WHEEL_RADIUS = 0.33
 
 var CONTACT = false
+
+@onready var engine_audio = $EngineAudioPlayer
 
 func _physics_process(delta: float) -> void:
 	
@@ -49,10 +54,13 @@ func _physics_process(delta: float) -> void:
 	# Car basic controls
 	if Input.is_action_pressed("throttle"):
 		THROTTLE = min(THROTTLE + 0.02, 1.0)
-	elif Input.is_action_pressed("brake"):
-		SPEED = max(SPEED - (BREAK_VALUE * delta), 0)
 	else:
 		THROTTLE = max(THROTTLE - 0.01, 0.0)
+	
+	if Input.is_action_pressed("brake"):
+		SPEED = max(SPEED - (BREAK_VALUE * delta), 0)
+		RPM = max(MIN_RPM, RPM - 1000 * delta)  # RPM drops faster when braking
+
 	
 	if Input.is_action_just_pressed("gear_up") and CURRENT_GEAR < 6:
 		CURRENT_GEAR += 1
@@ -61,7 +69,7 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("gear_down") and CURRENT_GEAR > 0:
 		CURRENT_GEAR -= 1
 		RPM = min(MAX_RPM, RPM * 1.3)
-		SPEED = max(SPEED * 0.8, 0.0)
+		SPEED = max(SPEED * 0.75, 0.0)
 	
 	# Update RPM based on throttle & gear
 	if CURRENT_GEAR != 0:
@@ -74,12 +82,18 @@ func _physics_process(delta: float) -> void:
 	if CURRENT_GEAR != 0:
 		ACCELERATION_FORCE = (TORQUE * FINAL_DRIVE_RATIO * GEAR_RATIOS[CURRENT_GEAR]) / WHEEL_RADIUS  # Force (N)
 		ACCELERATION = ACCELERATION_FORCE / CAR_MASS  # Newton's Second Law
+		ACCELERATION = min(ACCELERATION, ACCELERATION_LIMITS[CURRENT_GEAR]) # Limit Acceleration based on gear
 	else:
 		ACCELERATION = 0.0
 		
 	SPEED += ACCELERATION * delta
-	SPEED -= DECELERATION * delta if SPEED > 0 and THROTTLE == 0 else 0
-	SPEED = clamp(SPEED, 0, MAX_SPEED)
+	
+	if THROTTLE == 0 and CURRENT_GEAR != 0:
+		SPEED = max(SPEED - (ENGINE_BRAKING * delta), MIN_SPEED_PER_GEAR[CURRENT_GEAR])
+	
+	# SPEED -= DECELERATION * delta if SPEED > 0 and THROTTLE == 0 else 0
+	
+	SPEED = clamp(SPEED, 0, MAX_SPEED_PER_GEAR[CURRENT_GEAR])
 	
 	# Steering Control
 	if Input.is_action_pressed("steering_left"):
@@ -102,6 +116,9 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	
 	rotate_y(STEERING_ANGLE * delta) 
+	
+	engine_audio.generate_engine_audio(RPM, delta)
+	
 	print("Speed: " + str(SPEED))
 	print("Current Gear: " + str(CURRENT_GEAR))
 	print("RPM: " + str(RPM))
