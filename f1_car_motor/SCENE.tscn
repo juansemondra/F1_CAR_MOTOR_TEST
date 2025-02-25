@@ -17,11 +17,11 @@ glow_enabled = true
 
 [sub_resource type="BoxMesh" id="BoxMesh_jatx5"]
 
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_7nohm"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_1ddqk"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_jdqfn"]
+[sub_resource type="BoxMesh" id="BoxMesh_yf6uv"]
 
-[sub_resource type="BoxMesh" id="BoxMesh_uclxd"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_1rqk7"]
 
 [node name="Node3D" type="Node3D"]
 
@@ -33,19 +33,43 @@ transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -
 shadow_enabled = true
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.555839, 2.4679, -13.433)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.9849, 2.4679, -119.721)
 mesh = SubResource("BoxMesh_jatx5")
 
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D2"]
+shape = SubResource("BoxShape3D_1ddqk")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.9849, 2.4679, -132.951)
+mesh = SubResource("BoxMesh_jatx5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D3"]
+shape = SubResource("BoxShape3D_1ddqk")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.9849, 2.4679, -146.865)
+mesh = SubResource("BoxMesh_jatx5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D4"]
+shape = SubResource("BoxShape3D_1ddqk")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.9849, 2.4679, -160.095)
+mesh = SubResource("BoxMesh_jatx5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D5"]
+shape = SubResource("BoxShape3D_1ddqk")
+
 [node name="F1" parent="." instance=ExtResource("1_s0af6")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0891943, 0.250631, 0.600437)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0891943, 0.276532, 0.600437)
+disable_mode = 1
 
-[node name="RigidBody3D" type="RigidBody3D" parent="."]
-transform = Transform3D(10000, 0, 0, 0, 1, 0, 0, 0, 10000, 0, 0, 0)
-physics_material_override = SubResource("PhysicsMaterial_7nohm")
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
-shape = SubResource("BoxShape3D_jdqfn")
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+transform = Transform3D(100, 0, 0, 0, 0.1, 0, 0, 0, 2000, 0, 0, 0)
+mesh = SubResource("BoxMesh_yf6uv")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(100, 0, 0, 0, 0.1, 0, 0, 0, 100, 0.188695, 0.0158329, 0.0224366)
-mesh = SubResource("BoxMesh_uclxd")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(100, 0, 0, 0, 0.1, 0, 0, 0, 2000, 0, 0, 0)
+shape = SubResource("BoxShape3D_1rqk7")
